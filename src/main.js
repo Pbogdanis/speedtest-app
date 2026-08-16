@@ -61,10 +61,10 @@ function setBarPhase(phase) {
   const uploadFill = els.uploadFill
   const uploadIcon = els.uploadIcon
 
-  downloadFill.classList.remove('active', 'download', 'upload', 'paused')
-  downloadIcon.classList.remove('active', 'download', 'upload', 'paused')
-  uploadFill.classList.remove('active', 'download', 'upload', 'paused')
-  uploadIcon.classList.remove('active', 'download', 'upload', 'paused')
+  downloadFill.classList.remove('active', 'download', 'upload', 'paused', 'complete')
+  downloadIcon.classList.remove('active', 'download', 'upload', 'paused', 'complete')
+  uploadFill.classList.remove('active', 'download', 'upload', 'paused', 'complete')
+  uploadIcon.classList.remove('active', 'download', 'upload', 'paused', 'complete')
 
   if (phase === 'idle') {
     els.downloadLabel.textContent = 'Idle'
@@ -100,6 +100,13 @@ function pauseBar(fill, icon) {
 function resumeBar(fill, icon) {
   fill.classList.remove('paused')
   icon.classList.remove('paused')
+}
+
+function completeBar(fill, icon) {
+  fill.classList.remove('active', 'download', 'upload', 'paused')
+  fill.classList.add('complete')
+  icon.classList.remove('active', 'download', 'upload', 'paused')
+  icon.classList.add('complete')
 }
 
 function setRunningState(running) {
@@ -198,6 +205,8 @@ function runSimulation() {
 }
 
 function finishSimulation() {
+  completeBar(els.downloadFill, els.downloadIcon)
+  completeBar(els.uploadFill, els.uploadIcon)
   els.status.textContent = 'Test complete'
   els.statusValue.textContent = 'Complete'
   setRunningState(false)
@@ -240,12 +249,6 @@ function startRealTest() {
       const jit = results.getUnloadedJitter()
       els.latencyValue.textContent = `${formatMs(lat)} ms`
       els.jitterValue.textContent = `${formatMs(jit)} ms`
-      if (currentPhase !== 'idle') {
-        pauseBar(els.downloadFill, els.downloadIcon)
-        pauseBar(els.uploadFill, els.uploadIcon)
-        els.downloadLabel.textContent = 'Paused'
-        els.uploadLabel.textContent = 'Paused'
-      }
       return
     }
 
@@ -253,6 +256,7 @@ function startRealTest() {
       const bw = results.getDownloadBandwidth()
       els.downloadValue.textContent = `${formatMbps(bw)} Mbps`
       if (currentPhase !== 'download') {
+        completeBar(els.uploadFill, els.uploadIcon)
         setBarPhase('download')
         resumeBar(els.downloadFill, els.downloadIcon)
       }
@@ -262,6 +266,7 @@ function startRealTest() {
       const bw = results.getUploadBandwidth()
       els.uploadValue.textContent = `${formatMbps(bw)} Mbps`
       if (currentPhase !== 'upload') {
+        completeBar(els.downloadFill, els.downloadIcon)
         setBarPhase('upload')
         resumeBar(els.uploadFill, els.uploadIcon)
       }
@@ -269,6 +274,8 @@ function startRealTest() {
   }
 
   speedTest.onFinish = () => {
+    completeBar(els.downloadFill, els.downloadIcon)
+    completeBar(els.uploadFill, els.uploadIcon)
     els.status.textContent = 'Test complete'
     els.statusValue.textContent = 'Complete'
     setRunningState(false)
