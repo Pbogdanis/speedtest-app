@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cloudflare Speedtest</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#c0c0c0" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="win95-window">
+        <div class="title-bar">
+          <span class="title-text">Cloudflare Speedtest</span>
+        </div>
+
+        <div class="window-body">
+          <p id="status" class="status-text">Ready to start</p>
+
+          <section class="metrics">
+            <div class="metric">
+              <span class="metric-label">Download</span>
+              <span class="metric-value" id="downloadValue">0.00 Mbps</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Latency</span>
+              <span class="metric-value" id="latencyValue">0 ms</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Jitter</span>
+              <span class="metric-value" id="jitterValue">0 ms</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Upload</span>
+              <span class="metric-value" id="uploadValue">0.00 Mbps</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Duration</span>
+              <span class="metric-value" id="durationValue">0.0s</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Status</span>
+              <span class="metric-value" id="statusValue">Ready</span>
+            </div>
+          </section>
+
+          <section class="bar-section">
+            <div class="bar-header">
+              <span class="bar-title">Download</span>
+              <span class="bar-status" id="downloadLabel">Idle</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" id="downloadFill"></div>
+              <div class="file-icon" id="downloadIcon">📁</div>
+            </div>
+          </section>
+
+          <section class="bar-section">
+            <div class="bar-header">
+              <span class="bar-title">Upload</span>
+              <span class="bar-status" id="uploadLabel">Idle</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" id="uploadFill"></div>
+              <div class="file-icon" id="uploadIcon">📁</div>
+            </div>
+          </section>
+
+          <section class="controls">
+            <button id="startBtn" class="btn btn-primary">Start</button>
+            <button id="stopBtn" class="btn btn-danger" disabled>Stop</button>
+          </section>
+
+          <section class="results" id="results" hidden>
+            <h2>Results</h2>
+            <div class="results-grid">
+              <div class="result-item">
+                <span class="result-label">Download</span>
+                <span class="result-value" id="resultDownload">-</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Upload</span>
+                <span class="result-value" id="resultUpload">-</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Latency</span>
+                <span class="result-value" id="resultLatency">-</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Jitter</span>
+                <span class="result-value" id="resultJitter">-</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <footer>
+        <p>Powered by <a href="https://speed.cloudflare.com" target="_blank" rel="noopener">Cloudflare</a></p>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
