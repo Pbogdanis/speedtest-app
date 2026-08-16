@@ -131,10 +131,12 @@ function startTest() {
   speedTest = new SpeedTest({
     measurements: [
       { type: 'latency', numPackets: 5 },
-      { type: 'download', bytes: 1e4, count: 3 },
       { type: 'download', bytes: 1e5, count: 4 },
-      { type: 'upload', bytes: 1e4, count: 3 },
+      { type: 'download', bytes: 1e6, count: 4 },
+      { type: 'download', bytes: 1e7, count: 4 },
       { type: 'upload', bytes: 1e5, count: 4 },
+      { type: 'upload', bytes: 1e6, count: 4 },
+      { type: 'upload', bytes: 1e7, count: 4 },
     ],
   })
 
