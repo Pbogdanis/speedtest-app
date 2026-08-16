@@ -197,6 +197,21 @@ body {
   display: flex;
   gap: 8px;
   justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.debug-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.debug-label input {
+  cursor: pointer;
 }
 
 .btn {
@@ -291,8 +306,8 @@ footer a {
 }
 
 @keyframes uploadMove {
-  0% { left: 100%; }
-  100% { left: -40px; }
+  0% { left: -40px; }
+  100% { left: 100%; }
 }
 
 @media (max-width: 480px) {

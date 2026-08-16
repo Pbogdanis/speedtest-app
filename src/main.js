@@ -30,23 +30,20 @@ const els = {
   durationValue: document.getElementById('durationValue'),
   startBtn: document.getElementById('startBtn'),
   stopBtn: document.getElementById('stopBtn'),
+  debugMode: document.getElementById('debugMode'),
   downloadFill: document.getElementById('downloadFill'),
   downloadIcon: document.getElementById('downloadIcon'),
   downloadLabel: document.getElementById('downloadLabel'),
   uploadFill: document.getElementById('uploadFill'),
   uploadIcon: document.getElementById('uploadIcon'),
   uploadLabel: document.getElementById('uploadLabel'),
-  results: document.getElementById('results'),
-  resultDownload: document.getElementById('resultDownload'),
-  resultUpload: document.getElementById('resultUpload'),
-  resultLatency: document.getElementById('resultLatency'),
-  resultJitter: document.getElementById('resultJitter'),
 }
 
 let speedTest = null
 let currentPhase = 'idle'
 let durationTimer = null
 let startTime = 0
+let simulationTimers = []
 
 function formatMbps(bps) {
   if (!bps || bps <= 0) return '0.00'
@@ -119,13 +116,14 @@ function resetUI() {
   els.statusValue.textContent = 'Ready'
   els.durationValue.textContent = '0.0s'
   setBarPhase('idle')
-  els.results.hidden = true
   setRunningState(false)
   currentPhase = 'idle'
   if (durationTimer) {
     clearInterval(durationTimer)
     durationTimer = null
   }
+  simulationTimers.forEach(t => clearTimeout(t))
+  simulationTimers = []
 }
 
 function startDurationTimer() {
@@ -143,9 +141,71 @@ function stopDurationTimer() {
   }
 }
 
-function startTest() {
-  if (speedTest && speedTest.isRunning) return
+function simulateTest() {
+  const latency = (Math.random() * 30 + 20).toFixed(2)
+  const jitter = (Math.random() * 10 + 2).toFixed(2)
+  els.latencyValue.textContent = `${latency} ms`
+  els.jitterValue.textContent = `${jitter} ms`
+  if (currentPhase !== 'idle') {
+    pauseBar(els.downloadFill, els.downloadIcon)
+    pauseBar(els.uploadFill, els.uploadIcon)
+    els.downloadLabel.textContent = 'Paused'
+    els.uploadLabel.textContent = 'Paused'
+  }
+}
 
+function simulateDownload() {
+  const bw = (Math.random() * 50 + 30).toFixed(2)
+  els.downloadValue.textContent = `${bw} Mbps`
+  if (currentPhase !== 'download') {
+    setBarPhase('download')
+    resumeBar(els.downloadFill, els.downloadIcon)
+  }
+}
+
+function simulateUpload() {
+  const bw = (Math.random() * 20 + 10).toFixed(2)
+  els.uploadValue.textContent = `${bw} Mbps`
+  if (currentPhase !== 'upload') {
+    setBarPhase('upload')
+    resumeBar(els.uploadFill, els.uploadIcon)
+  }
+}
+
+function runSimulation() {
+  let phase = 0
+  const phases = [
+    { name: 'latency', duration: 1500, action: simulateTest },
+    { name: 'download', duration: 4000, action: simulateDownload },
+    { name: 'latency', duration: 1500, action: simulateTest },
+    { name: 'upload', duration: 4000, action: simulateUpload },
+  ]
+  let i = 0
+
+  function next() {
+    if (i >= phases.length) {
+      finishSimulation()
+      return
+    }
+    const p = phases[i]
+    i++
+    p.action()
+    const t = setTimeout(next, p.duration)
+    simulationTimers.push(t)
+  }
+
+  next()
+}
+
+function finishSimulation() {
+  els.status.textContent = 'Test complete'
+  els.statusValue.textContent = 'Complete'
+  setRunningState(false)
+  stopDurationTimer()
+  setBarPhase('idle')
+}
+
+function startRealTest() {
   resetUI()
   speedTest = new SpeedTest({
     measurements: [
@@ -208,13 +268,7 @@ function startTest() {
     }
   }
 
-  speedTest.onFinish = (results) => {
-    const summary = results.getSummary()
-    els.resultDownload.textContent = `${formatMbps(summary.download)} Mbps`
-    els.resultUpload.textContent = `${formatMbps(summary.upload)} Mbps`
-    els.resultLatency.textContent = `${formatMs(summary.latency)} ms`
-    els.resultJitter.textContent = `${formatMs(summary.jitter)} ms`
-    els.results.hidden = false
+  speedTest.onFinish = () => {
     els.status.textContent = 'Test complete'
     els.statusValue.textContent = 'Complete'
     setRunningState(false)
@@ -234,9 +288,27 @@ function startTest() {
   speedTest.play()
 }
 
+function startTest() {
+  if (speedTest && speedTest.isRunning) return
+
+  resetUI()
+  setRunningState(true)
+
+  if (els.debugMode && els.debugMode.checked) {
+    els.status.textContent = 'Testing...'
+    els.statusValue.textContent = 'Running'
+    startDurationTimer()
+    runSimulation()
+  } else {
+    startRealTest()
+  }
+}
+
 function stopTest() {
-  if (!speedTest) return
-  speedTest.restart()
+  if (speedTest) {
+    speedTest.restart()
+    speedTest = null
+  }
   resetUI()
 }
 
