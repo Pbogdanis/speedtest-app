@@ -61,12 +61,14 @@ function setBarPhase(phase) {
   const uploadFill = els.uploadFill
   const uploadIcon = els.uploadIcon
 
-  downloadFill.classList.remove('active', 'download', 'upload', 'paused', 'complete')
-  downloadIcon.classList.remove('active', 'download', 'upload', 'paused', 'complete')
-  uploadFill.classList.remove('active', 'download', 'upload', 'paused', 'complete')
-  uploadIcon.classList.remove('active', 'download', 'upload', 'paused', 'complete')
+  downloadFill.classList.remove('active', 'download', 'upload', 'paused')
+  downloadIcon.classList.remove('active', 'download', 'upload', 'paused')
+  uploadFill.classList.remove('active', 'download', 'upload', 'paused')
+  uploadIcon.classList.remove('active', 'download', 'upload', 'paused')
 
   if (phase === 'idle') {
+    downloadFill.style.width = ''
+    uploadFill.style.width = ''
     els.downloadLabel.textContent = 'Idle'
     els.uploadLabel.textContent = 'Idle'
     currentPhase = 'idle'
@@ -74,6 +76,7 @@ function setBarPhase(phase) {
   }
 
   if (phase === 'download') {
+    downloadFill.style.width = ''
     downloadFill.classList.add('active', 'download')
     downloadIcon.classList.add('active', 'download')
     els.downloadLabel.textContent = 'Active'
@@ -82,6 +85,7 @@ function setBarPhase(phase) {
   }
 
   if (phase === 'upload') {
+    uploadFill.style.width = ''
     uploadFill.classList.add('active', 'upload')
     uploadIcon.classList.add('active', 'upload')
     els.uploadLabel.textContent = 'Active'
@@ -104,7 +108,7 @@ function resumeBar(fill, icon) {
 
 function completeBar(fill, icon) {
   fill.classList.remove('active', 'download', 'upload', 'paused')
-  fill.classList.add('complete')
+  fill.style.width = '100%'
   icon.classList.remove('active', 'download', 'upload', 'paused')
   icon.classList.add('complete')
 }

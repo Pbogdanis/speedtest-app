@@ -166,13 +166,6 @@ body {
   animation-play-state: paused;
 }
 
-.bar-fill.complete {
-  width: 100%;
-  left: 0;
-  animation: none;
-  opacity: 1;
-}
-
 .file-icon {
   position: absolute;
   top: 50%;
