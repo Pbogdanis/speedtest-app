@@ -1,6 +1,25 @@
 import './style.css'
 import SpeedTest from '@cloudflare/speedtest'
 
+const originalLog = console.log
+const originalWarn = console.warn
+
+console.log = (...args) => {
+  const msg = args[0]
+  if (typeof msg === 'string' && /^(serverTimeDelta|latency|download|upload|results)\b/.test(msg)) {
+    return
+  }
+  originalLog.apply(console, args)
+}
+
+console.warn = (...args) => {
+  const msg = args[0]
+  if (typeof msg === 'string' && /^(Requested|Error fetching)\b/.test(msg)) {
+    return
+  }
+  originalWarn.apply(console, args)
+}
+
 const els = {
   status: document.getElementById('status'),
   downloadValue: document.getElementById('downloadValue'),
